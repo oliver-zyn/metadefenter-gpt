@@ -16,7 +16,11 @@ export const sanitizeImageFile = async (
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
+    // Create an object URL so we can revoke it later and avoid memory leaks
+    const objectUrl = URL.createObjectURL(file);
+
     if (!ctx) {
+      URL.revokeObjectURL(objectUrl);
       reject(new Error("Não foi possível obter contexto do canvas"));
       return;
     }
@@ -28,6 +32,9 @@ export const sanitizeImageFile = async (
 
       canvas.toBlob(
         async (blob) => {
+          // Release the object URL once the image has been processed
+          URL.revokeObjectURL(objectUrl);
+
           if (!blob) {
             reject(new Error("Erro ao criar blob"));
             return;
@@ -68,10 +75,11 @@ export const sanitizeImageFile = async (
     };
 
     img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
       reject(new Error("Erro ao carregar imagem"));
     };
 
-    img.src = URL.createObjectURL(file);
+    img.src = objectUrl;
   });
 };
 
