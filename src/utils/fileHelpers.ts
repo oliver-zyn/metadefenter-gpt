@@ -1,3 +1,5 @@
+import type { SanitizationCertificate } from "../types";
+
 export const getSensitiveMetadataKeys = (): string[] => {
   return [
     "GPS Latitude",
@@ -98,7 +100,9 @@ export const generateSanitizationCertificate = (
   };
 };
 
-export const downloadCertificate = (certificate: any): void => {
+export const downloadCertificate = (
+  certificate: SanitizationCertificate
+): void => {
   const certData = JSON.stringify(certificate, null, 2);
   const blob = new Blob([certData], { type: "application/json" });
   const url = URL.createObjectURL(blob);

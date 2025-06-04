@@ -1,54 +1,65 @@
-# React + TypeScript + Vite
+# MetaDefender - Sanitizador de Metadados
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+MetaDefender é uma aplicação web desenvolvida em React e TypeScript que permite analisar e
+remover metadados de arquivos de imagem (JPEG/PNG) e documentos PDF diretamente
+no navegador. Todo o processamento é realizado localmente, garantindo que nenhum
+conteúdo seja enviado para servidores externos.
 
-Currently, two official plugins are available:
+## Tecnologias Utilizadas
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React** 19
+- **TypeScript**
+- **Vite** para o empacotamento e servidor de desenvolvimento
+- **Tailwind CSS** para estilização
+- **ExifReader** para leitura de metadados de imagens
+- **pdf-lib** para manipulação básica de PDFs
+- **lucide-react** para os ícones da interface
 
-## Expanding the ESLint configuration
+## Como Funciona
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. O usuário faz o upload de uma imagem ou PDF.
+2. Os metadados são extraídos no lado do cliente (imagem via `ExifReader` e PDF
+   via `pdf-lib`).
+3. Metadados considerados sensíveis (como informações de GPS ou autor) são
+   destacados na interface.
+4. Ao acionar **Sanitizar**, é gerada uma cópia do arquivo sem metadados:
+   - Imagens são redesenhadas em um canvas, eliminando informações embutidas.
+   - PDFs recebem uma nova versão do arquivo. A remoção de todos os metadados
+     pode variar conforme a estrutura do documento.
+5. É exibido um resumo com hashes SHA-256, quantidade de metadados removidos e um
+   certificado de sanitização que pode ser baixado junto ao arquivo limpo.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Execução do Projeto
+
+```bash
+npm install       # instala as dependências
+npm run dev       # inicia o servidor de desenvolvimento
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Após executar `npm run dev`, acesse `http://localhost:5173` no navegador. Para
+gerar uma versão de produção utilize:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+npm run build
+npm run preview   # visualiza o build gerado
 ```
+
+## Estrutura do Código
+
+- `src/App.tsx` – componente principal e fluxo de upload/sanitização.
+- `src/utils/metadataExtractor.ts` – funções de extração de metadados.
+- `src/utils/fileSanitizer.ts` – cria as cópias sanitizadas dos arquivos.
+- `src/utils/fileHelpers.ts` – utilitários como hashing e downloads.
+- `src/types` – definições TypeScript utilizadas no app.
+- `public/` – arquivos estáticos (imagens e ícones).
+
+## Privacidade
+
+O MetaDefender não realiza upload de arquivos para nenhum servidor. Todas as
+operações ocorrem apenas no seu navegador, mantendo seus documentos em
+segurança e privacidade total.
+
+## Contribuição
+
+Pull requests são bem-vindos! Antes de enviar, utilize `npm run lint` para
+verificar o estilo do código.

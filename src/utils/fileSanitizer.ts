@@ -1,4 +1,4 @@
-import type { SanitizedFileResult } from "../types/index";
+import type { SanitizedFileResult, FileMetadata } from "../types/index";
 import {
   generateFileHash,
   generateSanitizationCertificate,
@@ -7,7 +7,7 @@ import {
 
 export const sanitizeImageFile = async (
   file: File,
-  originalMetadata: any
+  originalMetadata: FileMetadata
 ): Promise<SanitizedFileResult> => {
   const originalHash = await generateFileHash(file);
 
@@ -85,7 +85,7 @@ export const sanitizeImageFile = async (
 
 export const sanitizePdfFile = async (
   file: File,
-  originalMetadata: any
+  originalMetadata: FileMetadata
 ): Promise<SanitizedFileResult> => {
   const originalHash = await generateFileHash(file);
 
